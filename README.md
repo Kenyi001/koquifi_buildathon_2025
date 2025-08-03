@@ -1,6 +1,6 @@
-# 🪙 KoquiFI - DeFi para Jóvenes Bolivianos
+# 🪙 KokiFI - DeFi para Jóvenes Bolivianos
 
-**KoquiFI** es una plataforma DeFi gamificada diseñada específicamente para jóvenes bolivianos, combinando educación financiera, staking, y un sistema de lotería semanal en la blockchain de Avalanche.
+**KokiFI** es una plataforma DeFi gamificada diseñada específicamente para jóvenes bolivianos, combinando educación financiera, staking, y un sistema de lotería semanal en la blockchain de Avalanche.
 
 ## 🎯 Visión
 
@@ -8,10 +8,10 @@ Democratizar el acceso a las finanzas descentralizadas (DeFi) para los jóvenes 
 
 ## ⭐ Características Principales
 
-### 🪙 Token KOQUICOIN (KOQUI)
+### 🪙 Token KOKICOIN (KOKI)
 - **Burn Hiperbólico**: Función matemática única que reduce el supply de forma controlada
-- **Supply Inicial**: 100,000,000 KOQUI
-- **Supply Mínimo**: 1,000,000 KOQUI (protección contra deflación extrema)
+- **Supply Inicial**: 100,000,000 KOKI
+- **Supply Mínimo**: 1,000,000 KOKI (protección contra deflación extrema)
 - **Utility**: Staking, pagos, premios de lotería
 
 ### 🎰 Sistema de Lotería Semanal
@@ -21,7 +21,7 @@ Democratizar el acceso a las finanzas descentralizadas (DeFi) para los jóvenes 
 - **Burn**: 5% del pool de premios se quema automáticamente
 
 ### 💱 Exchange Descentralizado (DEX)
-- **Pares**: USDT.e ↔ KOQUICOIN
+- **Pares**: USDT.e ↔ KOKICOIN
 - **Integración**: Trader Joe para liquidez
 - **Mint/Burn**: Directo basado en oracle de precios
 - **Fees**: 0.3% configurables
@@ -31,7 +31,7 @@ Democratizar el acceso a las finanzas descentralizadas (DeFi) para los jóvenes 
 - **Activos**: USDT, AVAX, KOQUI
 - **Seguridad**: Validación de staleness y desviación
 - **Fallback**: Precios de respaldo en emergencias
-* Swap descentralizado entre **USDT.e** y **KOQUICOIN** usando Trader Joe
+* Swap descentralizado entre **USDT.e** y **KOKICOIN** usando Trader Joe
 * API RESTful construida con **Node.js**, **Express** y **ethers.js**
 * Automatización de sorteos con **Chainlink Automation (Keepers)**
 
