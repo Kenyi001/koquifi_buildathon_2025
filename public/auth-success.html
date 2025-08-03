@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ Autenticación Exitosa - KoquiFI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .success-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 3rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2ecc71, #27ae60, #2ecc71);
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            animation: bounceIn 0.8s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-left: 4px solid #2ecc71;
+        }
+
+        .user-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .user-detail:hover {
+            background: white;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .detail-value {
+            color: #7f8c8d;
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .wallet-address {
+            background: #e8f5e8;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .continue-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem 0;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .loading-redirect {
+            margin-top: 2rem;
+            color: #7f8c8d;
+        }
+
+        .loading-dots {
+            display: inline-block;
+            animation: loading 1.4s infinite;
+        }
+
+        @keyframes loading {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #ecf0f1;
+            border-radius: 2px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            border-radius: 2px;
+            width: 0%;
+            animation: fillProgress 3s ease-out forwards;
+        }
+
+        @keyframes fillProgress {
+            to {
+                width: 100%;
+            }
+        }
+
+        .features-preview {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.25rem;
+        }
+
+        .feature-desc {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        @media (max-width: 480px) {
+            .success-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            .user-detail {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✅</div>
+        <h1>¡Bienvenido!</h1>
+        <p class="subtitle">Tu cuenta ha sido creada exitosamente en KoquiFI</p>
+
+        <div class="user-info" id="userInfo">
+            <div class="user-detail">
+                <span class="detail-label">📧 Email:</span>
+                <span class="detail-value" id="userEmail">Cargando...</span>
+            </div>
+            <div class="user-detail">
+                <span class="detail-label">👤 Nombre:</span>
+                <span class="detail-value" id="userName">Cargando...</span>
+            </div>
+            <div class="user-detail">
+                <span class="detail-label">🔗 Tipo de login:</span>
+                <span class="detail-value" id="loginType">Cargando...</span>
+            </div>
+            <div class="user-detail">
+                <span class="detail-label">💰 Billetera:</span>
+                <div class="wallet-address" id="walletAddress">Cargando...</div>
+            </div>
+        </div>
+
+        <button class="continue-btn" onclick="goToDashboard()">
+            Continuar al Dashboard
+        </button>
+
+        <div class="loading-redirect">
+            <p>Redirigiendo automáticamente en <span id="countdown">5</span> segundos<span class="loading-dots">...</span></p>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="features-preview">
+            <h3 style="color: #2c3e50; margin-bottom: 1rem;">🎮 Lo que puedes hacer ahora:</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎫</div>
+                    <div class="feature-title">Comprar Tickets</div>
+                    <div class="feature-desc">Participa en la lotería semanal</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <div class="feature-title">Staking</div>
+                    <div class="feature-desc">Gana recompensas</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Dashboard</div>
+                    <div class="feature-desc">Monitorea tu progreso</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <div class="feature-title">Intercambios</div>
+                    <div class="feature-desc">Swap KOQUI ↔ USDT</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==============================================
+        // 🎉 Success Page Logic
+        // ==============================================
+
+        let countdownTimer;
+        let redirectTimer;
+
+        // 🚀 Initialize on page load
+        window.addEventListener('load', async () => {
+            await loadUserData();
+            startCountdown();
+        });
+
+        // 👤 Load user data from URL or localStorage
+        async function loadUserData() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const tempToken = urlParams.get('token');
+
+                if (tempToken) {
+                    // Decodificar datos de Google desde URL
+                    const userData = JSON.parse(atob(tempToken));
+                    displayUserData({
+                        email: userData.email,
+                        name: userData.name,
+                        loginType: 'Google OAuth',
+                        walletAddress: 'Generando billetera segura...'
+                    });
+
+                    // Procesar autenticación completa
+                    setTimeout(() => {
+                        window.location.href = '/auth.html?token=' + tempToken;
+                    }, 3000);
+                    
+                } else {
+                    // Cargar datos desde localStorage
+                    const storedUser = localStorage.getItem('koquifi_user');
+                    const storedWallet = localStorage.getItem('koquifi_wallet');
+
+                    if (storedUser) {
+                        const user = JSON.parse(storedUser);
+                        const wallet = storedWallet ? JSON.parse(storedWallet) : null;
+
+                        displayUserData({
+                            email: user.email || 'Usuario de billetera',
+                            name: user.name || `Usuario ${user.walletAddress?.slice(0, 6)}...`,
+                            loginType: user.loginType === 'google' ? 'Google OAuth' : 'Conexión de billetera',
+                            walletAddress: user.walletAddress || 'No disponible'
+                        });
+                    } else {
+                        // Fallback si no hay datos
+                        displayUserData({
+                            email: 'No disponible',
+                            name: 'Usuario KoquiFI',
+                            loginType: 'Autenticación exitosa',
+                            walletAddress: 'Configurando...'
+                        });
+                    }
+                }
+
+            } catch (error) {
+                console.error('❌ Error loading user data:', error);
+                displayUserData({
+                    email: 'Error al cargar',
+                    name: 'Usuario KoquiFI', 
+                    loginType: 'Autenticación exitosa',
+                    walletAddress: 'Error al cargar'
+                });
+            }
+        }
+
+        // 🎨 Display user data in UI
+        function displayUserData(userData) {
+            document.getElementById('userEmail').textContent = userData.email;
+            document.getElementById('userName').textContent = userData.name;
+            document.getElementById('loginType').textContent = userData.loginType;
+            document.getElementById('walletAddress').textContent = userData.walletAddress;
+
+            // Add copy functionality to wallet address
+            const walletEl = document.getElementById('walletAddress');
+            walletEl.style.cursor = 'pointer';
+            walletEl.title = 'Click para copiar';
+            walletEl.onclick = () => {
+                navigator.clipboard.writeText(userData.walletAddress);
+                walletEl.textContent = '✅ Copiado!';
+                setTimeout(() => {
+                    walletEl.textContent = userData.walletAddress;
+                }, 2000);
+            };
+        }
+
+        // ⏱️ Start countdown for auto-redirect
+        function startCountdown() {
+            let seconds = 5;
+            const countdownEl = document.getElementById('countdown');
+
+            countdownTimer = setInterval(() => {
+                seconds--;
+                countdownEl.textContent = seconds;
+
+                if (seconds <= 0) {
+                    clearInterval(countdownTimer);
+                    goToDashboard();
+                }
+            }, 1000);
+
+            // También iniciar el progreso visual
+            setTimeout(() => {
+                goToDashboard();
+            }, 5000);
+        }
+
+        // 🎯 Navigate to dashboard
+        function goToDashboard() {
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+            }
+
+            // Verificar que tenemos sesión válida
+            const sessionId = localStorage.getItem('koquifi_session');
+            
+            if (sessionId) {
+                window.location.href = '/dashboard.html';
+            } else {
+                // Si no hay sesión, redirigir a login
+                window.location.href = '/auth.html';
+            }
+        }
+
+        // 🎊 Add some celebration effects
+        function createConfetti() {
+            const colors = ['#2ecc71', '#3498db', '#9b59b6', '#e74c3c', '#f39c12'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.width = '10px';
+                    confetti.style.height = '10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.left = Math.random() * window.innerWidth + 'px';
+                    confetti.style.top = '-10px';
+                    confetti.style.zIndex = '9999';
+                    confetti.style.borderRadius = '50%';
+                    confetti.style.animation = `fall 3s linear forwards`;
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3000);
+                }, i * 100);
+            }
+        }
+
+        // 🎨 Add CSS animation for confetti
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fall {
+                0% {
+                    transform: translateY(-10px) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // 🎉 Start celebration
+        setTimeout(createConfetti, 500);
+
+        // 🔧 Handle page visibility
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (countdownTimer) {
+                    clearInterval(countdownTimer);
+                }
+            } else {
+                // Restart countdown if page becomes visible again
+                startCountdown();
+            }
+        });
+    </script>
+</body>
+</html>

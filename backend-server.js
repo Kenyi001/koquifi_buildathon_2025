@@ -1,14 +1,37 @@
 const express = require('express');
 const cors = require('cors');
+const session = require('express-session');
+const passport = require('passport');
 const { ethers } = require('hardhat');
 require('dotenv').config();
+
+// Import authentication routes
+const authRoutes = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:3002', 'http://localhost:3000'],
+    credentials: true
+}));
 app.use(express.json());
+
+// Session configuration
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'koquifi-secret-key-2025',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { 
+        secure: false, // Set to true in production with HTTPS
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+}));
+
+// Passport configuration
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Contract addresses from .env
 const CONTRACT_ADDRESSES = {
@@ -49,15 +72,28 @@ async function initializeContracts() {
     }
 }
 
+// Authentication routes
+app.use('/auth', authRoutes);
+
 // Routes
 
 // 🏠 Health check
 app.get('/', (req, res) => {
     res.json({
         status: 'ok',
-        message: '🚀 KoquiFI Backend - Buildathon 2025',
+        message: '🚀 KoquiFI Backend ICM-ICTT - Buildathon 2025',
         contracts: CONTRACT_ADDRESSES,
+        features: [
+            '🔐 Google OAuth + Wallet Authentication',
+            '💰 Automated Wallet Creation',
+            '🎫 NFT Ticket System',
+            '💱 Token Staking & Rewards'
+        ],
         endpoints: [
+            'POST /auth/init - Initialize Web3Auth',
+            'GET /auth/google - Google OAuth login',
+            'POST /auth/connect/wallet - Connect existing wallet',
+            'GET /auth/profile - Get user profile',
             'GET /token/info - Información del token',
             'GET /staking/info - Información del staking',
             'GET /staking/cycle/:number - Info de un ciclo específico',

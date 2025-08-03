@@ -9,32 +9,35 @@
 - **🔧 Backend API**: Express.js conectado a blockchain
 - **🎨 Frontend**: Interface web en tiempo real
 - **💰 Gas Optimizado**: 88% ahorro en deployment
+- **🔐 ICM-ICTT**: Identity & Wallet Management System
+- **📧 Google OAuth**: Login con Google integrado
+- **🔗 Wallet Connection**: Soporte para billeteras existentes
 
 ### 🚀 Inicio Rápido
 
-**Windows:**
+**ICM-ICTT Demo (Recomendado):**
 ```bash
-start-demo.bat
-```
+# Windows
+start-icm-demo.bat
 
-**Linux/Mac:**
-```bash
-chmod +x start-demo.sh
-./start-demo.sh
+# Linux/Mac
+chmod +x start-icm-demo.sh
+./start-icm-demo.sh
 ```
 
 **Manual:**
 ```bash
-# Terminal 1: Backend
+# Terminal 1: Backend con autenticación
 node backend-server.js
 
-# Terminal 2: Frontend  
+# Terminal 2: Frontend con ICM-ICTT
 node frontend-server.js
 
-# Abrir: http://localhost:3002
+# Abrir: http://localhost:3002/auth.html
 ```
 
 ### 📋 URLs del Demo:
+- **🔐 Autenticación**: http://localhost:3002/auth.html
 - **🎨 Frontend**: http://localhost:3002
 - **🔧 Backend API**: http://localhost:3000
 - **📊 Dashboard**: http://localhost:3000/dashboard
@@ -49,6 +52,58 @@ node frontend-server.js
 - 📊 **Dashboard en tiempo real**
 - 🔍 **Contratos verificados en Snowtrace**
 - 💰 **Gas ultra-optimizado**
+- **🔐 ICM-ICTT System**:
+  - 📧 Google OAuth Login
+  - 🔗 Conexión de billeteras existentes
+  - 💰 Creación automática de billetera
+  - 👤 Gestión de usuarios y sesiones
+  - 🎫 Tracking de actividades
+  - 📊 Estadísticas de usuarios en tiempo real
+
+## 🔐 Sistema ICM-ICTT
+
+### **Identity & Wallet Management**
+
+El sistema ICM-ICTT permite a los usuarios:
+
+1. **📧 Registro con Google OAuth**:
+   - Login con cuenta de Google
+   - Creación automática de billetera segura
+   - Perfil completo con email y nombre
+
+2. **🔗 Conexión de Billetera Existente**:
+   - Conectar MetaMask, Core Wallet, etc.
+   - Mantener control total de la billetera
+   - Registro simplificado
+
+3. **👤 Gestión de Usuarios**:
+   - Sesiones seguras con tokens
+   - Tracking de actividades
+   - Estadísticas personalizadas
+
+### **🚀 Cómo usar ICM-ICTT**
+
+1. Ir a `http://localhost:3002/auth.html`
+2. Elegir método de autenticación:
+   - **📧 "Crear cuenta con Google"**: OAuth login
+   - **🔗 "Conectar billetera existente"**: MetaMask/Core
+3. Completar el proceso de autenticación
+4. ¡Acceder al dashboard completo!
+
+### **⚡ Endpoints de Autenticación**
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST | `/auth/init` | Inicializar Web3Auth |
+| GET | `/auth/google` | Google OAuth login |
+| POST | `/auth/register/google` | Completar registro Google |
+| POST | `/auth/connect/wallet` | Conectar billetera |
+| GET | `/auth/profile` | Obtener perfil de usuario |
+| GET | `/auth/stats` | Estadísticas de usuario |
+| POST | `/auth/logout` | Cerrar sesión |
+| GET | `/auth/check-session` | Verificar sesión |
+| POST | `/auth/ticket-purchase` | Registrar compra de ticket |
+| GET | `/auth/admin/users` | Listar usuarios (admin) |
 
 ## ⭐ Características Principales
 

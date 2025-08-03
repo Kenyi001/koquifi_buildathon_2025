@@ -31,12 +31,77 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             margin-bottom: 30px;
+            position: relative;
         }
         
         .header h1 {
             color: #4c51bf;
             font-size: 2.5em;
             margin-bottom: 10px;
+        }
+
+        .auth-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .auth-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .user-profile {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 25px;
+            border: 1px solid #e9ecef;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-name {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
         }
         
         .network-info {
@@ -484,11 +549,24 @@
 <body>
     <div class="container">
         <div class="header">
+            <!-- Authentication Button/Profile -->
+            <div id="authSection">
+                <a href="/auth.html" class="auth-button" id="loginBtn">
+                    🔐 Iniciar Sesión / Registrarse
+                </a>
+                <div class="user-profile" id="userProfile" style="display: none;">
+                    <div class="user-avatar" id="userAvatar">👤</div>
+                    <span class="user-name" id="userName">Usuario</span>
+                    <button class="logout-btn" onclick="logout()">Salir</button>
+                </div>
+            </div>
+
             <h1>🚀 KoquiFI</h1>
-            <p>Buildathon 2025 - DeFi Lottery Platform</p>
+            <p>Buildathon 2025 - DeFi Lottery Platform with ICM-ICTT</p>
             <div class="network-info">
                 <strong>🌐 Red:</strong> Avalanche Fuji Testnet | 
-                <strong>⚡ Backend:</strong> <span id="backend-status" class="status">Conectando...</span>
+                <strong>⚡ Backend:</strong> <span id="backend-status" class="status">Conectando...</span> |
+                <strong>👤 Usuarios:</strong> <span id="user-count">-</span>
             </div>
         </div>
 
@@ -538,6 +616,176 @@
         
         // Estado global
         let dashboardData = null;
+        let currentUser = null;
+        let sessionId = null;
+
+        // ==============================================
+        // 🔐 Authentication Functions
+        // ==============================================
+
+        // Check authentication status on page load
+        window.addEventListener('load', async () => {
+            await checkAuthStatus();
+            fetchDashboardData();
+        });
+
+        // Check if user is authenticated
+        async function checkAuthStatus() {
+            try {
+                const storedSession = localStorage.getItem('koquifi_session');
+                const storedUser = localStorage.getItem('koquifi_user');
+
+                if (storedSession && storedUser) {
+                    sessionId = storedSession;
+                    
+                    // Verify session with server
+                    const response = await fetch(`${BACKEND_URL}/auth/check-session`, {
+                        headers: {
+                            'X-Session-ID': sessionId
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.valid) {
+                        currentUser = result.user;
+                        updateAuthUI(true);
+                        await fetchUserStats();
+                    } else {
+                        // Session expired, clear storage
+                        clearAuthData();
+                    }
+                } else {
+                    updateAuthUI(false);
+                }
+            } catch (error) {
+                console.error('❌ Auth check error:', error);
+                updateAuthUI(false);
+            }
+        }
+
+        // Update authentication UI
+        function updateAuthUI(isAuthenticated) {
+            const loginBtn = document.getElementById('loginBtn');
+            const userProfile = document.getElementById('userProfile');
+
+            if (isAuthenticated && currentUser) {
+                loginBtn.style.display = 'none';
+                userProfile.style.display = 'flex';
+                
+                // Update user info
+                document.getElementById('userName').textContent = 
+                    currentUser.name || `Usuario ${currentUser.walletAddress?.slice(0, 6)}...`;
+                
+                // Update avatar
+                const avatar = document.getElementById('userAvatar');
+                if (currentUser.picture) {
+                    avatar.style.backgroundImage = `url(${currentUser.picture})`;
+                    avatar.style.backgroundSize = 'cover';
+                    avatar.textContent = '';
+                } else {
+                    avatar.textContent = currentUser.name?.charAt(0).toUpperCase() || '👤';
+                }
+                
+            } else {
+                loginBtn.style.display = 'flex';
+                userProfile.style.display = 'none';
+            }
+        }
+
+        // Fetch user statistics
+        async function fetchUserStats() {
+            try {
+                if (!sessionId) return;
+
+                const response = await fetch(`${BACKEND_URL}/auth/stats`, {
+                    headers: {
+                        'X-Session-ID': sessionId
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    updateUserCount(result.stats.totalUsers);
+                }
+            } catch (error) {
+                console.error('❌ User stats error:', error);
+            }
+        }
+
+        // Update user count in UI
+        function updateUserCount(count) {
+            document.getElementById('user-count').textContent = count || '-';
+        }
+
+        // Logout function
+        async function logout() {
+            try {
+                if (sessionId) {
+                    await fetch(`${BACKEND_URL}/auth/logout`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Session-ID': sessionId
+                        }
+                    });
+                }
+                
+                clearAuthData();
+                updateAuthUI(false);
+                
+                // Show logout message
+                showSuccess('Sesión cerrada exitosamente');
+                
+            } catch (error) {
+                console.error('❌ Logout error:', error);
+                clearAuthData();
+                updateAuthUI(false);
+            }
+        }
+
+        // Clear authentication data
+        function clearAuthData() {
+            localStorage.removeItem('koquifi_session');
+            localStorage.removeItem('koquifi_user');
+            localStorage.removeItem('koquifi_wallet');
+            currentUser = null;
+            sessionId = null;
+        }
+
+        // ==============================================
+        // 🎫 Enhanced Ticket Purchase with Auth
+        // ==============================================
+
+        // Record ticket purchase for authenticated users
+        async function recordTicketPurchase(ticketId, numbers, txHash) {
+            try {
+                if (!sessionId) return;
+
+                const response = await fetch(`${BACKEND_URL}/auth/ticket-purchase`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Session-ID': sessionId
+                    },
+                    body: JSON.stringify({
+                        ticketId,
+                        numbers,
+                        txHash
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    console.log('✅ Ticket purchase recorded');
+                } else {
+                    console.error('❌ Failed to record ticket purchase:', result.error);
+                }
+            } catch (error) {
+                console.error('❌ Record ticket purchase error:', error);
+            }
+        }
         
         // Funciones de utilidad
         function formatAddress(address) {
