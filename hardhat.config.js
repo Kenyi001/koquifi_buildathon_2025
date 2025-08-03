@@ -8,8 +8,9 @@ module.exports = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 200
-      }
+        runs: 1000  // Más optimizaciones para gas (era 200)
+      },
+      viaIR: true  // Habilitar IR para mejor optimización
     }
   },
   
@@ -22,8 +23,8 @@ module.exports = {
       url: process.env.FUJI_RPC_URL || "https://api.avax-test.network/ext/bc/C/rpc",
       chainId: 43113,
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      gas: 3000000,
-      gasPrice: 470000000000, // 470 Gwei
+      gas: 2000000,          // Reducido de 2.5M a 2M
+      gasPrice: 15000000000, // 15 Gwei (reducido de 25 Gwei)
     },
     
     localhost: {

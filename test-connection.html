@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KoquiFI - Test Connection</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+</head>
+<body>
+    <h1>Test de Conexión KoquiFI</h1>
+    <div id="status">🔄 Conectando...</div>
+    <div id="details"></div>
+    
+    <script>
+        async function testConnection() {
+            const statusEl = document.getElementById('status');
+            const detailsEl = document.getElementById('details');
+            
+            try {
+                console.log('🚀 Iniciando test de conexión...');
+                
+                // Intentar conexión directa a Hardhat
+                const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+                console.log('📡 Provider creado');
+                
+                // Test básico de red
+                const network = await provider.getNetwork();
+                console.log('🌐 Red:', network);
+                
+                // Obtener cuentas
+                const accounts = await provider.listAccounts();
+                console.log('👥 Cuentas:', accounts);
+                
+                if (accounts.length > 0) {
+                    const signer = provider.getSigner(accounts[0]);
+                    const address = await signer.getAddress();
+                    console.log('📍 Dirección:', address);
+                    
+                    // Test de balance
+                    const balance = await provider.getBalance(address);
+                    console.log('💰 Balance ETH:', ethers.utils.formatEther(balance));
+                    
+                    statusEl.innerHTML = '✅ CONECTADO';
+                    statusEl.style.color = 'green';
+                    detailsEl.innerHTML = `
+                        <p><strong>Red:</strong> Chain ID ${network.chainId}</p>
+                        <p><strong>Dirección:</strong> ${address}</p>
+                        <p><strong>Balance ETH:</strong> ${ethers.utils.formatEther(balance)}</p>
+                        <p><strong>Cuentas disponibles:</strong> ${accounts.length}</p>
+                    `;
+                } else {
+                    throw new Error('No se encontraron cuentas');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                statusEl.innerHTML = '❌ ERROR DE CONEXIÓN';
+                statusEl.style.color = 'red';
+                detailsEl.innerHTML = `<p><strong>Error:</strong> ${error.message}</p>`;
+            }
+        }
+        
+        // Ejecutar test al cargar
+        window.addEventListener('load', testConnection);
+    </script>
+</body>
+</html>

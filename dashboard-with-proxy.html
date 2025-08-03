@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KoquiFI - Dashboard con Proxy</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+        }
+        
+        .connected { background: #28a745; }
+        .disconnected { background: #dc3545; }
+        .testing { background: #ffc107; color: #333; }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .stat-title {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.5em;
+        }
+        
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .input-group {
+            margin: 10px 0;
+        }
+        
+        .input-group input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            width: 200px;
+            margin-right: 10px;
+        }
+        
+        .status-message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .loading { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        
+        .section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        #activityLog {
+            height: 200px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="connection-status testing" id="connectionStatus">🔄 Conectando...</div>
+    
+    <div class="container">
+        <h1>🚀 KoquiFI Dashboard (con Proxy)</h1>
+        
+        <div class="section">
+            <h3>🔍 Estado de Conexión</h3>
+            <div class="status-message info" id="connectionDetails">
+                Usando proxy para evitar problemas CORS...
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">Total Supply KOQUI</div>
+                <div class="stat-value" id="totalSupply">Cargando...</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Tu Balance KOQUI</div>
+                <div class="stat-value" id="userBalance">Cargando...</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Dirección Activa</div>
+                <div class="stat-value" id="activeAddress" style="font-size: 0.8em;">Cargando...</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Balance ETH</div>
+                <div class="stat-value" id="ethBalance">Cargando...</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3>🪙 Gestión de Tokens</h3>
+            <div class="input-group">
+                <input type="number" id="mintAmount" placeholder="Cantidad" min="1" value="1000">
+                <button class="button" onclick="mintTokens()">🎯 Mint Tokens</button>
+                <button class="button" onclick="burnTokens()">🔥 Burn Tokens</button>
+            </div>
+            <div class="status-message" id="actionStatus" style="display: none;"></div>
+        </div>
+        
+        <div class="section">
+            <h3>📊 Log de Actividad</h3>
+            <div id="activityLog"></div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let provider;
+        let signer;
+        let contracts = {};
+        let isConnected = false;
+        
+        // Usar proxy en lugar de conexión directa
+        const PROXY_URL = window.location.origin + '/api/hardhat';
+        
+        const CONTRACT_ADDRESSES = {
+            KOQUI_COIN: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+            TICKET_NFT: "0x0165878A594ca255338adfa4d48449f69242Eb8F"
+        };
+        
+        const KOQUI_COIN_ABI = [
+            "function totalSupply() view returns (uint256)",
+            "function balanceOf(address) view returns (uint256)",
+            "function mint(address to, uint256 amount) external",
+            "function burn(uint256 amount) external"
+        ];
+        
+        function log(message) {
+            console.log(message);
+            const logEl = document.getElementById('activityLog');
+            const time = new Date().toLocaleTimeString();
+            logEl.innerHTML += `<div>[${time}] ${message}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('connectionDetails');
+            statusEl.textContent = message;
+            statusEl.className = `status-message ${type}`;
+        }
+        
+        function updateConnectionIndicator(status, text) {
+            const indicator = document.getElementById('connectionStatus');
+            indicator.className = `connection-status ${status}`;
+            indicator.textContent = text;
+        }
+        
+        async function init() {
+            log("🚀 Iniciando conexión con proxy...");
+            updateConnectionIndicator("testing", "🔄 Conectando...");
+            
+            try {
+                // Crear provider usando el proxy
+                provider = new ethers.providers.JsonRpcProvider(PROXY_URL);
+                
+                log("✅ Provider creado con proxy");
+                
+                // Obtener red
+                const network = await provider.getNetwork();
+                log(`✅ Red: Chain ID ${network.chainId}`);
+                
+                // Obtener cuentas
+                const accounts = await provider.listAccounts();
+                log(`✅ Cuentas encontradas: ${accounts.length}`);
+                
+                if (accounts.length === 0) {
+                    throw new Error('No hay cuentas disponibles');
+                }
+                
+                // Usar primera cuenta
+                signer = provider.getSigner(accounts[0]);
+                const address = await signer.getAddress();
+                log(`✅ Usando cuenta: ${address}`);
+                
+                // Obtener balance ETH
+                const ethBalance = await provider.getBalance(address);
+                log(`✅ Balance ETH: ${ethers.utils.formatEther(ethBalance)}`);
+                
+                // Crear contratos
+                contracts.koquiCoin = new ethers.Contract(
+                    CONTRACT_ADDRESSES.KOQUI_COIN,
+                    KOQUI_COIN_ABI,
+                    signer
+                );
+                
+                log("✅ Contratos instanciados");
+                
+                // Obtener datos
+                await refreshStats();
+                
+                updateConnectionIndicator("connected", "🟢 Conectado (Proxy)");
+                updateStatus("¡Conectado exitosamente usando proxy!", "success");
+                isConnected = true;
+                
+                log("🎉 ¡Conexión exitosa con proxy!");
+                
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+                updateStatus(`Error: ${error.message}`, "error");
+                updateConnectionIndicator("disconnected", "🔴 Error");
+            }
+        }
+        
+        async function refreshStats() {
+            try {
+                const address = await signer.getAddress();
+                
+                const totalSupply = await contracts.koquiCoin.totalSupply();
+                const balance = await contracts.koquiCoin.balanceOf(address);
+                const ethBalance = await provider.getBalance(address);
+                
+                document.getElementById('totalSupply').textContent = 
+                    parseFloat(ethers.utils.formatEther(totalSupply)).toLocaleString() + ' KOQUI';
+                document.getElementById('userBalance').textContent = 
+                    parseFloat(ethers.utils.formatEther(balance)).toLocaleString() + ' KOQUI';
+                document.getElementById('activeAddress').textContent = 
+                    address.substring(0, 6) + '...' + address.substring(38);
+                document.getElementById('ethBalance').textContent = 
+                    parseFloat(ethers.utils.formatEther(ethBalance)).toFixed(2) + ' ETH';
+                
+            } catch (error) {
+                log(`⚠️ Error actualizando stats: ${error.message}`);
+            }
+        }
+        
+        async function mintTokens() {
+            if (!isConnected) {
+                alert('No estás conectado');
+                return;
+            }
+            
+            try {
+                const amount = document.getElementById('mintAmount').value;
+                if (!amount || amount <= 0) {
+                    throw new Error('Cantidad inválida');
+                }
+                
+                const statusEl = document.getElementById('actionStatus');
+                statusEl.textContent = '⏳ Minteando tokens...';
+                statusEl.className = 'status-message loading';
+                statusEl.style.display = 'block';
+                
+                const address = await signer.getAddress();
+                const tx = await contracts.koquiCoin.mint(address, ethers.utils.parseEther(amount));
+                
+                log(`⏳ TX: ${tx.hash}`);
+                await tx.wait();
+                
+                log(`✅ Mint exitoso: ${amount} KOQUI`);
+                statusEl.textContent = `✅ ${amount} KOQUI minteados!`;
+                statusEl.className = 'status-message success';
+                
+                setTimeout(refreshStats, 1000);
+                
+            } catch (error) {
+                log(`❌ Error en mint: ${error.message}`);
+                const statusEl = document.getElementById('actionStatus');
+                statusEl.textContent = `❌ Error: ${error.message}`;
+                statusEl.className = 'status-message error';
+                statusEl.style.display = 'block';
+            }
+        }
+        
+        async function burnTokens() {
+            if (!isConnected) {
+                alert('No estás conectado');
+                return;
+            }
+            
+            try {
+                const amount = document.getElementById('mintAmount').value;
+                if (!amount || amount <= 0) {
+                    throw new Error('Cantidad inválida');
+                }
+                
+                const statusEl = document.getElementById('actionStatus');
+                statusEl.textContent = '⏳ Quemando tokens...';
+                statusEl.className = 'status-message loading';
+                statusEl.style.display = 'block';
+                
+                const tx = await contracts.koquiCoin.burn(ethers.utils.parseEther(amount));
+                
+                log(`⏳ TX: ${tx.hash}`);
+                await tx.wait();
+                
+                log(`✅ Burn exitoso: ${amount} KOQUI`);
+                statusEl.textContent = `✅ ${amount} KOQUI quemados!`;
+                statusEl.className = 'status-message success';
+                
+                setTimeout(refreshStats, 1000);
+                
+            } catch (error) {
+                log(`❌ Error en burn: ${error.message}`);
+                const statusEl = document.getElementById('actionStatus');
+                statusEl.textContent = `❌ Error: ${error.message}`;
+                statusEl.className = 'status-message error';
+                statusEl.style.display = 'block';
+            }
+        }
+        
+        // Iniciar
+        window.addEventListener('load', () => {
+            setTimeout(init, 500);
+        });
+        
+        // Auto-refresh
+        setInterval(() => {
+            if (isConnected) {
+                refreshStats();
+            }
+        }, 15000);
+    </script>
+</body>
+</html>
