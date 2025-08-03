@@ -39,6 +39,12 @@ module.exports = {
     }
   },
   
+  etherscan: {
+    apiKey: {
+      avalancheFujiTestnet: process.env.SNOWTRACE_API_KEY || "YourApiKeyToken"
+    }
+  },
+  
   paths: {
     sources: "./contracts",
     tests: "./test",

@@ -1,10 +1,54 @@
-# 🪙 KokiFI - DeFi para Jóvenes Bolivianos
+# 🚀 KoquiFI - Buildathon 2025 Demo
 
-**KokiFI** es una plataforma DeFi gamificada diseñada específicamente para jóvenes bolivianos, combinando educación financiera, staking, y un sistema de lotería semanal en la blockchain de Avalanche.
+**KoquiFI** es una plataforma DeFi gamificada diseñada para jóvenes bolivianos, combinando educación financiera, staking, y un sistema de lotería en blockchain de Avalanche.
 
-## 🎯 Visión
+## � Buildathon Demo
 
-Democratizar el acceso a las finanzas descentralizadas (DeFi) para los jóvenes bolivianos a través de una plataforma educativa, segura y divertida que combina inversión con gamificación.
+### ✅ Stack Completo Funcionando:
+- **🪙 Smart Contracts**: Deployados en Avalanche Fuji Testnet
+- **🔧 Backend API**: Express.js conectado a blockchain
+- **🎨 Frontend**: Interface web en tiempo real
+- **💰 Gas Optimizado**: 88% ahorro en deployment
+
+### 🚀 Inicio Rápido
+
+**Windows:**
+```bash
+start-demo.bat
+```
+
+**Linux/Mac:**
+```bash
+chmod +x start-demo.sh
+./start-demo.sh
+```
+
+**Manual:**
+```bash
+# Terminal 1: Backend
+node backend-server.js
+
+# Terminal 2: Frontend  
+node frontend-server.js
+
+# Abrir: http://localhost:3002
+```
+
+### 📋 URLs del Demo:
+- **🎨 Frontend**: http://localhost:3002
+- **🔧 Backend API**: http://localhost:3000
+- **📊 Dashboard**: http://localhost:3000/dashboard
+
+### 🔗 Contratos en Fuji Testnet:
+- **🪙 KoquiCoin**: `0xa36d6e3A44203d21D92f2d3CA89bE6dF0809aD76`
+- **🎫 TicketNFT**: `0x26360F225c6123904A93318703EB47187d32228E`
+- **🎰 Staking**: `0xfC105bE4cf9Cc246B582Bc3fE6Ca3316B786c53b`
+
+### 🎬 Demo Features:
+- ⚡ **Ciclos de 15 segundos** (vs 1 semana en producción)
+- 📊 **Dashboard en tiempo real**
+- 🔍 **Contratos verificados en Snowtrace**
+- 💰 **Gas ultra-optimizado**
 
 ## ⭐ Características Principales
 
